@@ -28,6 +28,8 @@ public class Main {
         manager.updateStatusSubtask(subtask1, TaskStatus.IN_PROGRESS);
         manager.updateStatusSubtask(subtask2, TaskStatus.IN_PROGRESS);
         manager.updateStatusSubtask(subtask1Epic2, TaskStatus.DONE);
+        Subtask subtask2Epic2 = new Subtask("привет мир", "пока мир", epic2);
+        manager.createSubtask(subtask2Epic2);
         System.out.println("Изменили статус подзадачи.");
 
         System.out.println(epic1);
@@ -36,5 +38,6 @@ public class Main {
         System.out.println(subtask1);
         System.out.println(subtask2);
         System.out.println(subtask1Epic2);
+        System.out.println(subtask2Epic2);
     }
 }

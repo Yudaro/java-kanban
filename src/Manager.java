@@ -79,6 +79,7 @@ public class Manager {
         counter++;
         subtask.setId(counter);
         subtasks.put(counter, subtask);
+        updateEpicStatus(subtask.getEpic());
     }
 
     public Epic idSearchEpic(int id) {
@@ -93,19 +94,19 @@ public class Manager {
         return subtasks.get(id);
     }
 
-    public void UpdateEpic(Epic epic) {
+    public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.id)) {
             epics.put(epic.id, epic);
         }
     }
 
-    public void UpdateTask(Task task) {
+    public void updateTask(Task task) {
         if (tasks.containsKey(task.id)) {
             tasks.put(task.id, task);
         }
     }
 
-    public void UpdateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) {
         if (subtasks.containsKey(subtask.id)) {
             subtasks.put(subtask.id, subtask);
         }
@@ -124,15 +125,11 @@ public class Manager {
     }
 
     public void deleteTaskById(int id) {
-        if (tasks.containsKey(id)) {
             tasks.remove(id);
-        }
     }
 
     public void deleteSubtaskById(int id) {
-        if (subtasks.containsKey(id)) {
-            subtasks.remove(id);
-        }
+        subtasks.remove(id);
         updateEpicStatus(subtasks.get(id).getEpic());
     }
 
