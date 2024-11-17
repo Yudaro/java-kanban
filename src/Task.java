@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Task {
-    Scanner scanner = new Scanner(System.in);
     protected String name;
     protected String description;
     protected TaskStatus status;
