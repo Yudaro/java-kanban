@@ -11,7 +11,7 @@ public class Epic extends Task {
 
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask);
-
+        setStatus(checkStatusEpic());
     }
 
     public void clearSubtasks() {
@@ -19,7 +19,7 @@ public class Epic extends Task {
     }
 
     public List<Integer> getSubtasksId() {
-        ArrayList<Integer> subtasksId = new ArrayList<>();
+        List<Integer> subtasksId = new ArrayList<>();
 
         for (Subtask subtask : subtasks) {
             subtasksId.add(subtask.getId());
@@ -32,25 +32,36 @@ public class Epic extends Task {
         return subtasks;
     }
 
-    public boolean isStatusSubtaskNew() {
+    private boolean isStatusSubtaskNew() {
         boolean isStatusNew = true;
 
         for (Subtask subtask : subtasks) {
             if (subtask.status != TaskStatus.NEW) {
-                return isStatusNew = false;
+                return false;
             }
         }
         return isStatusNew;
     }
 
-    public boolean isStatusSubtaskDone() {
+    private boolean isStatusSubtaskDone() {
         boolean isStatusDone = true;
 
         for (Subtask subtask : subtasks) {
             if (subtask.status != TaskStatus.DONE) {
-                return isStatusDone = false;
+                return false;
             }
         }
         return isStatusDone;
+    }
+
+
+    public TaskStatus checkStatusEpic() {
+        if (isStatusSubtaskNew()) {
+            return TaskStatus.NEW;
+        } else if (isStatusSubtaskDone()) {
+            return TaskStatus.DONE;
+        } else {
+            return TaskStatus.IN_PROGRESS;
+        }
     }
 }

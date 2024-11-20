@@ -15,18 +15,9 @@ public class Manager {
         subtasks = new HashMap<>();
     }
 
-    private TaskStatus checkStatusEpic(Epic epic) {
-        if (epic.isStatusSubtaskNew()) {
-            return TaskStatus.NEW;
-        } else if (epic.isStatusSubtaskDone()) {
-            return TaskStatus.DONE;
-        } else {
-            return TaskStatus.IN_PROGRESS;
-        }
-    }
 
     private void updateEpicStatus(Epic epic) {
-        epic.setStatus(checkStatusEpic(epic));
+        epic.setStatus(epic.checkStatusEpic());
     }
 
     public List<Epic> getAllEpics() {
