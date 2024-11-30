@@ -1,3 +1,7 @@
+package entities;
+
+import enums.TaskStatus;
+
 import java.util.*;
 
 public class Task {
@@ -39,7 +43,6 @@ public class Task {
         this.status = status;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,7 +58,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "entities.Task{" +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +

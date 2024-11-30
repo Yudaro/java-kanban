@@ -1,3 +1,8 @@
+import entities.Epic;
+import entities.Subtask;
+import enums.TaskStatus;
+import manager.InMemoryTaskManager;
+
 public class Main {
     public static void main(String[] args){
         String descriptionEpic1 = "Необходимо пройтись по лесу и убрать несколько участков, " +
@@ -10,7 +15,7 @@ public class Main {
         Subtask subtask1Epic2 = new Subtask("Уборка муссора в городе", "Сложить муссор " +
                 "по пакетам", epic2);
 
-        Manager manager = new Manager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
         manager.createEpic(epic1);
         manager.createEpic(epic2);
 
