@@ -14,13 +14,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task){
-        if (task == null){
-            return;
-        } else if(historyTasks.size() < 10){
-            historyTasks.add(task);
-        }else{
-            historyTasks.remove(0);
-            historyTasks.add(task);
+        if (task != null) {
+            if (historyTasks.size() < 10) {
+                historyTasks.add(task);
+            } else {
+                historyTasks.remove(0);
+                historyTasks.add(task);
+            }
         }
     }
 
@@ -29,3 +29,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         return List.copyOf(historyTasks);
     }
 }
+
+

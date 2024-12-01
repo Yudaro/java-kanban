@@ -19,8 +19,8 @@ public class InMemoryHistoryManagerTest {
         Task task = new Task("Уборка", "Убрать квартиру");
 
         taskManager.createTask(task);
-        taskManager.idSearchTask(task.getId());
-        taskManager.idSearchTask(task.getId());
+        taskManager.getTaskById(task.getId());
+        taskManager.getTaskById(task.getId());
 
 
        List<Task> historyTasks = historyManager.getHistory();
@@ -38,8 +38,8 @@ public class InMemoryHistoryManagerTest {
 
         taskManager.createTask(task);
         taskManager.createEpic(epic);
-        taskManager.idSearchTask(task.getId());
-        taskManager.idSearchEpic(epic.getId());
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
 
         List<Task> historyTasks = historyManager.getHistory();
 
@@ -56,10 +56,10 @@ public class InMemoryHistoryManagerTest {
 
         taskManager.createTask(task);
         taskManager.createEpic(epic);
-        taskManager.idSearchTask(task.getId());
+        taskManager.getTaskById(task.getId());
 
         for(int i = 0; i < 10; i++){
-            taskManager.idSearchEpic(epic.getId());
+            taskManager.getEpicById(epic.getId());
         }
 
         List<Task> historyTasks = historyManager.getHistory();

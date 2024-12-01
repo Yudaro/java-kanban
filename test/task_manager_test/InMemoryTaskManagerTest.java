@@ -9,7 +9,6 @@ import manager.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryTaskManagerTest {
@@ -23,7 +22,7 @@ public class InMemoryTaskManagerTest {
         List<Task> tasks = taskManager.getAllTasks();
         Assertions.assertEquals(1, tasks.size());
 
-        Task task2 = taskManager.idSearchTask(task.getId());
+        Task task2 = taskManager.getTaskById(task.getId());
         Assertions.assertNotNull(task2);
     }
 
@@ -37,7 +36,7 @@ public class InMemoryTaskManagerTest {
         List<Subtask> subtasks = taskManager.getAllSubtasks();
         Assertions.assertEquals(1, subtasks.size());
 
-        Subtask subtask2 = taskManager.idSearchSubtask(subtask1.getId());
+        Subtask subtask2 = taskManager.getSubtaskById(subtask1.getId());
         Assertions.assertNotNull(subtask2);
     }
 
@@ -50,7 +49,7 @@ public class InMemoryTaskManagerTest {
         List<Epic> epics = taskManager.getAllEpics();
         Assertions.assertEquals(1, epics.size());
 
-        Epic epic2 = taskManager.idSearchEpic(epic1.getId());
+        Epic epic2 = taskManager.getEpicById(epic1.getId());
         Assertions.assertNotNull(epic2);
     }
 
