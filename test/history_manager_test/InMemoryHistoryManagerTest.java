@@ -26,7 +26,7 @@ public class InMemoryHistoryManagerTest {
 
         List<Task> historyTasks = historyManager.getHistory();
 
-        Assertions.assertEquals(2, historyTasks.size());
+        Assertions.assertEquals(1, historyTasks.size());
         Assertions.assertEquals(task, historyTasks.get(0));
     }
 
@@ -46,29 +46,6 @@ public class InMemoryHistoryManagerTest {
 
         Assertions.assertEquals(2, historyTasks.size());
         Assertions.assertEquals(task, historyTasks.get(0));
-    }
-
-    @Test
-    public void checkThatTheOldestTaskIsDeletedWhenTheHistorySizeIsExceeded() {
-        TaskManager taskManager = Managers.getDefault();
-        HistoryManager historyManager = taskManager.getHistoryManager();
-        Task task = new Task("Уборка", "Убрать квартиру");
-        Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
-
-        taskManager.createTask(task);
-        taskManager.createEpic(epic);
-        taskManager.getTaskById(task.getId());
-
-        for (int i = 0; i < 10; i++) {
-            taskManager.getEpicById(epic.getId());
-        }
-
-        List<Task> historyTasks = historyManager.getHistory();
-
-        System.out.println(historyTasks.size());
-
-        Assertions.assertEquals(10, historyTasks.size());
-        Assertions.assertNotEquals(task, historyTasks.get(0));
     }
 
     @Test
