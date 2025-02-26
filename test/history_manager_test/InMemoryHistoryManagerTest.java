@@ -1,6 +1,7 @@
 package history_manager_test;
 
 import entities.Epic;
+import entities.Subtask;
 import entities.Task;
 import manager.HistoryManager;
 import manager.Managers;
@@ -68,5 +69,54 @@ public class InMemoryHistoryManagerTest {
 
         Assertions.assertEquals(10, historyTasks.size());
         Assertions.assertNotEquals(task, historyTasks.get(0));
+    }
+
+    @Test
+    public void checkThatTwoIdenticalTasksWillNotBeSavedInTheHistory(){
+        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = taskManager.getHistoryManager();
+        Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
+
+        taskManager.createEpic(epic);
+
+        Epic epic1 = taskManager.getEpicById(epic.getId());
+        Epic epic2 = taskManager.getEpicById(epic.getId());
+        Assertions.assertEquals(1, historyManager.getHistory().size());
+    }
+
+    @Test
+    public void checkThatDeletingEpicAlsoDeletesHistory(){
+        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = taskManager.getHistoryManager();
+        Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
+
+        taskManager.createEpic(epic);
+
+        Epic epic1 = taskManager.getEpicById(epic.getId());
+        taskManager.deleteEpicById(epic1.getId());
+        Assertions.assertEquals(0, historyManager.getHistory().size());
+    }
+
+    @Test
+    public void checkThatWhenAnEpicIsDeletedFromTheHistoryItsSubtaskIsDeleted(){
+        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = taskManager.getHistoryManager();
+        Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
+        Subtask subtask = new Subtask("Кухня", "Отодрать обои", epic);
+        Subtask subtask1 = new Subtask("Кухня", "Починить раковину", epic);
+
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(subtask);
+        taskManager.createSubtask(subtask1);
+
+        Epic testEpic = taskManager.getEpicById(epic.getId());
+        Subtask testSubtask1 = taskManager.getSubtaskById(subtask.getId());
+        Subtask testSubtask2 = taskManager.getSubtaskById(subtask1.getId());
+
+        Assertions.assertEquals(3, historyManager.getHistory().size());
+
+        taskManager.deleteEpicById(testEpic.getId());
+
+        Assertions.assertEquals(0, historyManager.getHistory().size());
     }
 }
