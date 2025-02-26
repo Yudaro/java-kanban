@@ -14,7 +14,7 @@ import java.util.List;
 public class InMemoryTaskManagerTest {
 
     @Test
-    public void checkAddAndSearchTaskById(){
+    public void checkAddAndSearchTaskById() {
         TaskManager taskManager = Managers.getDefault();
         Task task = new Task("Уборка снега", "Уборка снега на территории платца");
 
@@ -27,7 +27,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkAddAndSearchSubtaskById(){
+    public void checkAddAndSearchSubtaskById() {
         TaskManager taskManager = Managers.getDefault();
         Epic epic = new Epic("Домашние дела", "Навести порядок дома");
         Subtask subtask1 = new Subtask("Посуда", "Помыть посуду", epic);
@@ -41,7 +41,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkAddAndSearchEpicById(){
+    public void checkAddAndSearchEpicById() {
         TaskManager taskManager = Managers.getDefault();
         Epic epic1 = new Epic("Домашние дела", "Навести порядок дома");
 
@@ -54,7 +54,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkThatTheManagerGeneratesTheIdByItself(){
+    public void checkThatTheManagerGeneratesTheIdByItself() {
         TaskManager manager = Managers.getDefault();
         Task task1 = new Task("ДЗ", "Выполнить дз по 5 стринту");
         task1.setId(5);
@@ -70,7 +70,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkThatTaskFieldsAreNotChangedWhenAddedToTheManager(){
+    public void checkThatTaskFieldsAreNotChangedWhenAddedToTheManager() {
         Task task = new Task("Домашние дела", "Пропылесосить коредор");
         TaskManager manager = Managers.getDefault();
         task.setId(10);
@@ -83,7 +83,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkThatSubtaskFieldsAreNotChangedWhenAddedToTheManager(){
+    public void checkThatSubtaskFieldsAreNotChangedWhenAddedToTheManager() {
         TaskManager manager = Managers.getDefault();
         Epic epic = new Epic("Домашние задачи", "Навести порядок дома");
         Subtask subtask = new Subtask("Домашние дела", "Убрать гардероб", epic);
@@ -99,7 +99,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkThatEpicFieldsAreNotChangedWhenAddedToTheManager(){
+    public void checkThatEpicFieldsAreNotChangedWhenAddedToTheManager() {
         TaskManager manager = Managers.getDefault();
         Epic epic = new Epic("Домашние задачи", "Навести порядок дома");
         epic.setId(10);

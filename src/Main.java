@@ -7,7 +7,7 @@ import manager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String descriptionEpic1 = "Необходимо пройтись по лесу и убрать несколько участков, " +
                 "которые помечены желтыми флажками.";
         String descriptionEpic2 = "Необходимо навести порядок на территории 3 домов.";

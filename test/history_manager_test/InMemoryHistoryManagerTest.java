@@ -14,7 +14,7 @@ import java.util.List;
 public class InMemoryHistoryManagerTest {
 
     @Test
-    public void checkIfTasksAreSavedInHistory(){
+    public void checkIfTasksAreSavedInHistory() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Task task = new Task("Уборка", "Убрать квартиру");
@@ -24,14 +24,14 @@ public class InMemoryHistoryManagerTest {
         taskManager.getTaskById(task.getId());
 
 
-       List<Task> historyTasks = historyManager.getHistory();
+        List<Task> historyTasks = historyManager.getHistory();
 
         Assertions.assertEquals(2, historyTasks.size());
         Assertions.assertEquals(task, historyTasks.get(0));
     }
 
     @Test
-    public void checkThatThePreviousTaskIsSavedInTheHistoryWhenAddingANewTask(){
+    public void checkThatThePreviousTaskIsSavedInTheHistoryWhenAddingANewTask() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Task task = new Task("Уборка", "Убрать квартиру");
@@ -49,7 +49,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void checkThatTheOldestTaskIsDeletedWhenTheHistorySizeIsExceeded(){
+    public void checkThatTheOldestTaskIsDeletedWhenTheHistorySizeIsExceeded() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Task task = new Task("Уборка", "Убрать квартиру");
@@ -59,7 +59,7 @@ public class InMemoryHistoryManagerTest {
         taskManager.createEpic(epic);
         taskManager.getTaskById(task.getId());
 
-        for(int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             taskManager.getEpicById(epic.getId());
         }
 
@@ -72,7 +72,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void checkThatTwoIdenticalTasksWillNotBeSavedInTheHistory(){
+    public void checkThatTwoIdenticalTasksWillNotBeSavedInTheHistory() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
@@ -85,7 +85,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void checkThatDeletingEpicAlsoDeletesHistory(){
+    public void checkThatDeletingEpicAlsoDeletesHistory() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
@@ -98,7 +98,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void checkThatWhenAnEpicIsDeletedFromTheHistoryItsSubtaskIsDeleted(){
+    public void checkThatWhenAnEpicIsDeletedFromTheHistoryItsSubtaskIsDeleted() {
         TaskManager taskManager = Managers.getDefault();
         HistoryManager historyManager = taskManager.getHistoryManager();
         Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
