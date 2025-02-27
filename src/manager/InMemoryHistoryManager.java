@@ -26,7 +26,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public List<Node> getTask() {
-        List<Node> nodes = new ArrayList<>(historyMap.values());
+        ArrayList<Node> nodes = new ArrayList<>();
+        Node current = head;
+
+        while (current != null) {
+            nodes.add(current);
+            current = current.next;
+        }
+
         return nodes;
     }
 
@@ -43,8 +50,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = historyMap.get(id);
-        removeNode(node);
+        if (historyMap.containsKey(id)) {
+            Node node = historyMap.get(id);
+            removeNode(node);
+        } else {
+            System.out.println("Задачи с таким id " + id + " - нет.");
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import manager.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManagerTest {
@@ -95,5 +96,31 @@ public class InMemoryHistoryManagerTest {
         taskManager.deleteEpicById(testEpic.getId());
 
         Assertions.assertEquals(0, historyManager.getHistory().size());
+    }
+
+    @Test
+    public void checkTheOrderOfReturningTasksFromTheHistory() {
+        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = taskManager.getHistoryManager();
+        Epic epic = new Epic("Ремонт", "Отремонтировать квартиру");
+        Subtask subtask = new Subtask("Кухня", "Отодрать обои", epic);
+        Subtask subtask1 = new Subtask("Кухня", "Починить раковину", epic);
+
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(subtask);
+        taskManager.createSubtask(subtask1);
+
+        Epic testEpic = taskManager.getEpicById(epic.getId());
+        Subtask testSubtask1 = taskManager.getSubtaskById(subtask.getId());
+        Subtask testSubtask2 = taskManager.getSubtaskById(subtask1.getId());
+
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(epic);
+        tasks.add(subtask);
+        tasks.add(subtask1);
+
+        List<Task> historyTasks = historyManager.getHistory();
+
+        Assertions.assertEquals(tasks,historyTasks);
     }
 }
