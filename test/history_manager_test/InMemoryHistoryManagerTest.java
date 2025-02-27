@@ -121,6 +121,6 @@ public class InMemoryHistoryManagerTest {
 
         List<Task> historyTasks = historyManager.getHistory();
 
-        Assertions.assertEquals(tasks,historyTasks);
+        Assertions.assertEquals(tasks, historyTasks);
     }
 }
