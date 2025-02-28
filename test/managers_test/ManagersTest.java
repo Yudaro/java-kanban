@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class ManagersTest {
 
     @Test
-    public void managersRemoveClassNotNull(){
+    public void managersRemoveClassNotNull() {
         TaskManager manager1 = Managers.getDefault();
         HistoryManager manager2 = Managers.getDefaultHistory();
 

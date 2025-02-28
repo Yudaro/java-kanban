@@ -60,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllSubtask() {
         subtasks.clear();
 
-        for (Epic epic : epics.values()){
+        for (Epic epic : epics.values()) {
             updateEpicStatus(epic);
         }
     }
@@ -94,7 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        if (!epics.containsKey(id)){
+        if (!epics.containsKey(id)) {
             return null;
         }
 
@@ -105,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        if (!tasks.containsKey(id)){
+        if (!tasks.containsKey(id)) {
             return null;
         }
 
@@ -116,7 +116,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        if (!subtasks.containsKey(id)){
+        if (!subtasks.containsKey(id)) {
             return null;
         }
 
@@ -154,19 +154,22 @@ public class InMemoryTaskManager implements TaskManager {
                 deleteSubtaskById(subtaskId);
             }
             epic.clearSubtasks();
+            historyManager.remove(id);
             epics.remove(id);
         }
     }
 
     @Override
     public void deleteTaskById(int id) {
-            tasks.remove(id);
+        historyManager.remove(id);
+        tasks.remove(id);
     }
 
     @Override
     public void deleteSubtaskById(int id) {
-        subtasks.remove(id);
+        historyManager.remove(id);
         updateEpicStatus(subtasks.get(id).getEpic());
+        subtasks.remove(id);
     }
 
     @Override
@@ -175,13 +178,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateStatusSubtask(Subtask subtask, TaskStatus taskStatus){
+    public void updateStatusSubtask(Subtask subtask, TaskStatus taskStatus) {
         subtask.setStatus(taskStatus);
         updateEpicStatus(subtask.getEpic());
     }
 
     @Override
-    public HistoryManager getHistoryManager(){
+    public HistoryManager getHistoryManager() {
         return historyManager;
     }
 }

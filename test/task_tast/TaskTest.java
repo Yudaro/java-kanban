@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class TaskTest {
 
     @Test
-    public void checkForEqualityTaskForId(){
+    public void checkForEqualityTaskForId() {
         Task task1 = new Task("Уборка в лесу", "Убрать мусор в лесу");
         Task task2 = new Task("Уборка в лесу", "Убрать мусор в лесу");
 
@@ -18,7 +18,7 @@ public class TaskTest {
     }
 
     @Test
-    public void checkForNotEqualsTaskForId(){
+    public void checkForNotEqualsTaskForId() {
         Task task1 = new Task("Уборка в лесу", "Убрать мусор в лесу");
         Task task2 = new Task("Уборка в лесу", "Убрать мусор в лесу");
 
