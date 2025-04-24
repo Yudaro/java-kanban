@@ -1,0 +1,4 @@
+id,type,name,status,description,epic
+1,Epic,Имя,NEW,Проверка имени,
+2,Subtask,ИмяСабтаски1,NEW,ИмяСабтаски1,1,
+3,Subtask,ИмяСабтаски2,NEW,ИмяСабтаски2,1,
