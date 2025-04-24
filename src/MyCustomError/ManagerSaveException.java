@@ -1,4 +1,4 @@
-package Error;
+package MyCustomError;
 
 public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException() {
