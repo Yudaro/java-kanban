@@ -11,9 +11,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import mycustomerror.ManagerSaveException;
+import exception.ManagerSaveException;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    public static void main(String[] args) {
+        Epic epic = new Epic("Епик1", "Доделать 7 фз");
+        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic);
+        FileBackedTaskManager manager1 = new FileBackedTaskManager("tasks.csv");
+        manager1.createEpic(epic);
+        manager1.createSubtask(subtask);
+
+        FileBackedTaskManager manager2 = new FileBackedTaskManager(manager1.saveFile);
+        System.out.println(manager2.getAllEpics().size());
+        System.out.println(manager2.getAllSubtasks().size());
+    }
+
     File saveFile;
 
     /*
