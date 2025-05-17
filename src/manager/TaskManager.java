@@ -8,7 +8,7 @@ import enums.TaskStatus;
 import java.util.List;
 
 public interface TaskManager {
-    void updateEpicStatus(Epic epic);
+    void updateEpicStatus(int id);
 
     List<Epic> getAllEpics();
 
