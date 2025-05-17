@@ -4,17 +4,16 @@ import entities.Epic;
 import entities.Subtask;
 import entities.Task;
 import enums.TaskStatus;
+import exception.TaskTimeConflictException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int counter;
     protected final Map<Integer, Epic> epics;
     protected final Map<Integer, Task> tasks;
     protected final Map<Integer, Subtask> subtasks;
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -24,9 +23,24 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager = Managers.getDefaultHistory();
     }
 
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
+    private void checkIntersections(Task task) {
+        boolean isNotIntersections;
+        for (Task t : getPrioritizedTasks()) {
+            isNotIntersections = t.isNotIntersectionWithExistingTask(task);
+
+            if (isNotIntersections == false) {
+                throw new TaskTimeConflictException("Задачу добавить невозможно: конфлик во времени между задачами. ");
+            }
+        }
+    }
 
     @Override
-    public void updateEpicStatus(Epic epic) {
+    public void updateEpicStatus(int id) {
+        Epic epic = getEpicById(id);
         epic.setStatus(epic.checkStatusEpic());
     }
 
@@ -49,24 +63,41 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllEpics() {
         List<Epic> allEpics = getAllEpics();
 
-        for (Epic epic : allEpics) {
-            epic.clearSubtasks();
-        }
+//        for (Epic epic : allEpics) {
+//            epic.clearSubtasks();
+//        }
+
         epics.clear();
         subtasks.clear();
     }
 
     @Override
     public void deleteAllSubtask() {
+//        for(Subtask s : subtasks.values()){
+//            prioritizedTasks.remove(s);
+//        }
+        subtasks.values().stream()
+                .forEach(prioritizedTasks::remove);
+
         subtasks.clear();
 
-        for (Epic epic : epics.values()) {
-            updateEpicStatus(epic);
-        }
+//        for (Epic epic : epics.values()) {
+//            updateEpicStatus(epic.getId());
+//        }
+
+        epics.values().stream()
+                .map(Epic::getId)
+                .forEach(this::updateEpicStatus);
     }
 
     @Override
     public void deleteAllTasks() {
+//        for (Task t : tasks.values()){
+//            prioritizedTasks.remove(t);
+//        }
+
+        tasks.values().stream()
+                .forEach(prioritizedTasks::remove);
         tasks.clear();
     }
 
@@ -81,15 +112,19 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task task) {
         counter++;
         task.setId(counter);
+        checkIntersections(task);
         tasks.put(counter, task);
+        prioritizedTasks.add(task);
     }
 
     @Override
     public void createSubtask(Subtask subtask) {
         counter++;
         subtask.setId(counter);
+        checkIntersections(subtask);
         subtasks.put(counter, subtask);
         updateEpicStatus(subtask.getEpic());
+        prioritizedTasks.add(subtask);
     }
 
     @Override
@@ -148,11 +183,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpicById(int id) {
+//        if (epics.containsKey(id)) {
+//            Epic epic = epics.get(id);
+//            for (int subtaskId : epic.getSubtasksId()) {
+//                deleteSubtaskById(subtaskId);
+//            }
+//            epic.clearSubtasks();
+//            historyManager.remove(id);
+//            epics.remove(id);
+//        }
         if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
-            for (int subtaskId : epic.getSubtasksId()) {
-                deleteSubtaskById(subtaskId);
-            }
+
+            epic.getSubtasksId().stream()
+                    .forEach(this::deleteSubtaskById);
+
             epic.clearSubtasks();
             historyManager.remove(id);
             epics.remove(id);
