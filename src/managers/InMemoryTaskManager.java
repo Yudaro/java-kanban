@@ -1,10 +1,10 @@
-package manager;
+package managers;
 
 import entities.Epic;
 import entities.Subtask;
 import entities.Task;
 import enums.TaskStatus;
-import exception.TaskTimeConflictException;
+import exceptions.TaskTimeConflictException;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Epic> epics;
     protected final Map<Integer, Task> tasks;
     protected final Map<Integer, Subtask> subtasks;
-    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -23,6 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager = Managers.getDefaultHistory();
     }
 
+    @Override
     public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
     }
@@ -40,8 +41,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpicStatus(int id) {
-        Epic epic = getEpicById(id);
-        epic.setStatus(epic.checkStatusEpic());
+        Optional<Epic> optionalEpic = getEpicById(id);
+        if (optionalEpic.isPresent()) {
+            Epic epic = optionalEpic.get();
+            epic.setStatus(epic.checkStatusEpic());
+        }
     }
 
     @Override
@@ -128,36 +132,36 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicById(int id) {
+    public Optional<Epic> getEpicById(int id) {
         if (!epics.containsKey(id)) {
-            return null;
+            return Optional.empty();
         }
 
         Epic epic = epics.get(id);
         historyManager.add(epic);
-        return epic;
+        return Optional.ofNullable(epic);
     }
 
     @Override
-    public Task getTaskById(int id) {
+    public Optional<Task> getTaskById(int id) {
         if (!tasks.containsKey(id)) {
-            return null;
+            return Optional.empty();
         }
 
         Task task = tasks.get(id);
         historyManager.add(task);
-        return task;
+        return Optional.ofNullable(task);
     }
 
     @Override
-    public Subtask getSubtaskById(int id) {
+    public Optional<Subtask> getSubtaskById(int id) {
         if (!subtasks.containsKey(id)) {
-            return null;
+            return Optional.empty();
         }
 
         Subtask subtask = subtasks.get(id);
         historyManager.add(subtask);
-        return subtask;
+        return Optional.ofNullable(subtask);
     }
 
     @Override

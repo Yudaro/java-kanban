@@ -1,20 +1,17 @@
-package task_manager_test;
+package task_manager_tests;
 
 
 import entities.Epic;
 import entities.Subtask;
 import entities.Task;
-import manager.FileBackedTaskManager;
-import org.junit.jupiter.api.AfterEach;
+import managers.FileBackedTaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
@@ -46,7 +43,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     @Test
     public void chekSaveSubtaskInFile() {
         Epic epic = new Epic("Ремонт", "Доделать ремонт");
-        Subtask subtask = new Subtask("ПодзадачаРемонт", "Починить кран", epic, 10, Instant.now());
+        Subtask subtask = new Subtask("ПодзадачаРемонт", "Починить кран", epic, 10, LocalDateTime.now());
 
         manager.createEpic(epic);
         manager.createSubtask(subtask);

@@ -1,16 +1,13 @@
-package history_manager_test;
+package history_manager_tests;
 
 import entities.Epic;
-import entities.Subtask;
 import entities.Task;
-import manager.HistoryManager;
-import manager.Managers;
-import manager.TaskManager;
+import managers.HistoryManager;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManagerTest {
@@ -29,7 +26,7 @@ public class InMemoryHistoryManagerTest {
         List<Task> historyTasks = historyManager.getHistory();
 
         Assertions.assertEquals(1, historyTasks.size());
-        Assertions.assertEquals(task, historyTasks.get(0));
+        Assertions.assertEquals(task, historyTasks.getFirst());
     }
 
     @Test
@@ -47,7 +44,7 @@ public class InMemoryHistoryManagerTest {
         List<Task> historyTasks = historyManager.getHistory();
 
         Assertions.assertEquals(2, historyTasks.size());
-        Assertions.assertEquals(task, historyTasks.get(0));
+        Assertions.assertEquals(task, historyTasks.getFirst());
     }
 
     @Test
@@ -58,8 +55,8 @@ public class InMemoryHistoryManagerTest {
 
         taskManager.createEpic(epic);
 
-        Epic epic1 = taskManager.getEpicById(epic.getId());
-        Epic epic2 = taskManager.getEpicById(epic.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getEpicById(epic.getId());
         Assertions.assertEquals(1, historyManager.getHistory().size());
     }
 
@@ -71,7 +68,7 @@ public class InMemoryHistoryManagerTest {
 
         taskManager.createEpic(epic);
 
-        Epic epic1 = taskManager.getEpicById(epic.getId());
+        Epic epic1 = taskManager.getEpicById(epic.getId()).orElseThrow(() -> new AssertionError("Epic not found"));
         taskManager.deleteEpicById(epic1.getId());
         Assertions.assertEquals(0, historyManager.getHistory().size());
     }

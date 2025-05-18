@@ -1,15 +1,15 @@
-package task_manager_test;
+package task_manager_tests;
 
 import entities.Epic;
 import entities.Subtask;
 import entities.Task;
 import enums.TaskStatus;
-import manager.Managers;
-import manager.TaskManager;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -24,7 +24,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         List<Task> tasks = manager.getAllTasks();
         Assertions.assertEquals(1, tasks.size());
 
-        Task task2 = manager.getTaskById(task.getId());
+        Task task2 = manager.getTaskById(task.getId()).orElseThrow(() -> new AssertionError("Task not found"));
         Assertions.assertNotNull(task2);
     }
 
@@ -32,14 +32,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void checkAddAndSearchSubtaskById() {
         Epic epic = new Epic("Домашние дела", "Навести порядок дома");
-        Subtask subtask1 = new Subtask("Посуда", "Помыть посуду", epic, 10, Instant.now());
+        Subtask subtask1 = new Subtask("Посуда", "Помыть посуду", epic, 10, LocalDateTime.now());
 
         manager.createEpic(epic);
         manager.createSubtask(subtask1);
         List<Subtask> subtasks = manager.getAllSubtasks();
         Assertions.assertEquals(1, subtasks.size());
 
-        Subtask subtask2 = manager.getSubtaskById(subtask1.getId());
+        Subtask subtask2 = manager.getSubtaskById(subtask1.getId()).orElseThrow(() -> new AssertionError("Subtask not found"));
         Assertions.assertNotNull(subtask2);
     }
 
@@ -52,7 +52,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         List<Epic> epics = manager.getAllEpics();
         Assertions.assertEquals(1, epics.size());
 
-        Epic epic2 = manager.getEpicById(epic1.getId());
+        Epic epic2 = manager.getEpicById(epic1.getId()).orElseThrow(() -> new AssertionError("Epic not found"));
         Assertions.assertNotNull(epic2);
     }
 
@@ -83,7 +83,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void checkThatSubtaskFieldsAreNotChangedWhenAddedToTheManager() {
         Epic epic = new Epic("Домашние задачи", "Навести порядок дома");
-        Subtask subtask = new Subtask("Домашние дела", "Убрать гардероб", epic, 10, Instant.now());
+        Subtask subtask = new Subtask("Домашние дела", "Убрать гардероб", epic, 10, LocalDateTime.now());
         subtask.setId(10);
         manager.createEpic(epic);
         manager.createSubtask(subtask);
@@ -91,7 +91,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals("Домашние дела", subtask.getName());
         Assertions.assertEquals("Убрать гардероб", subtask.getDescription());
         Assertions.assertNotEquals(10, subtask.getId());
-        Assertions.assertEquals(epic, manager.getEpicById(subtask.getEpic()));
+        Epic epic2 = manager.getEpicById(subtask.getEpic())
+                .orElseThrow(() -> new AssertionError("Epic not found"));
+        Assertions.assertEquals(epic, epic2);
         Assertions.assertEquals(TaskStatus.NEW, subtask.getStatus());
     }
 

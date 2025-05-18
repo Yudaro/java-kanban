@@ -1,18 +1,14 @@
-package task_manager_test;
+package task_manager_tests;
 
-import entities.Epic;
-import entities.Subtask;
 import entities.Task;
-import enums.TaskStatus;
-import exception.TaskTimeConflictException;
-import manager.Managers;
-import manager.TaskManager;
+import exceptions.TaskTimeConflictException;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
@@ -23,8 +19,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void checkThatManagerIsAbleToDetectIntersections() {
-        Task task1 = new Task("Задача1", "Проверка пересечения", 10, Instant.now());
-        Task task2 = new Task("Задача1", "Проверка пересечения", 10, Instant.now().plusSeconds(100));
+        Task task1 = new Task("Задача1", "Проверка пересечения", 10, LocalDateTime.now());
+        Task task2 = new Task("Задача1", "Проверка пересечения", 10, LocalDateTime.now().plusSeconds(100));
 
         manager.createTask(task1);
 
@@ -35,8 +31,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
 
     @Test
     public void checkingThatWeCanAddTasksWithoutIntersections() {
-        Task task1 = new Task("Задача1", "Проверка пересечения", 10, Instant.now());
-        Task task2 = new Task("Задача2", "Проверка пересечения", 10, Instant.now().plusSeconds(600));
+        Task task1 = new Task("Задача1", "Проверка пересечения", 10, LocalDateTime.now());
+        Task task2 = new Task("Задача2", "Проверка пересечения", 10, LocalDateTime.now().plusSeconds(600));
 
         manager.createTask(task1);
         manager.createTask(task2);

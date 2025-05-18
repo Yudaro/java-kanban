@@ -2,8 +2,9 @@ package entities;
 
 import enums.TaskStatus;
 
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Task {
     protected String name;
@@ -11,17 +12,17 @@ public class Task {
     protected TaskStatus status;
     protected int id;
     protected int duration;
-    protected Instant startTime;
+    protected LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
         this.duration = 10;
-        this.startTime = Instant.now();
+        this.startTime = LocalDateTime.now();
     }
 
-    public Task(String name, String description, int duration, Instant startTime) {
+    public Task(String name, String description, int duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
@@ -49,11 +50,11 @@ public class Task {
         return duration;
     }
 
-    public Instant getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public Instant getEndTime() {
+    public LocalDateTime getEndTime() {
         return startTime.plus(Duration.ofMinutes(duration));
     }
 
@@ -63,8 +64,8 @@ public class Task {
         }
     }
 
-    public void setStartTime(Instant startTime) {
-        if (Instant.now().isBefore(startTime)) {
+    public void setStartTime(LocalDateTime startTime) {
+        if (LocalDateTime.now().isBefore(startTime)) {
             this.startTime = startTime;
         }
     }

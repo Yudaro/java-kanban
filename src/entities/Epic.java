@@ -2,13 +2,14 @@ package entities;
 
 import enums.TaskStatus;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Epic extends Task {
     private final List<Subtask> subtasks;
-    private Instant endTime;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description, 0, null);
@@ -30,13 +31,9 @@ public class Epic extends Task {
     }
 
     public List<Integer> getSubtasksId() {
-        List<Integer> subtasksId = new ArrayList<>();
-
-        for (Subtask subtask : subtasks) {
-            subtasksId.add(subtask.getId());
-        }
-
-        return subtasksId;
+        return subtasks.stream()
+                .map(Subtask::getId)
+                .collect(Collectors.toList());
     }
 
     public List<Subtask> getSubtasks() {

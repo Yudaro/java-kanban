@@ -1,8 +1,8 @@
 package entities;
 
-import exception.TaskTimeConflictException;
+import exceptions.TaskTimeConflictException;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class Subtask extends Task {
     private Epic epic;
@@ -13,7 +13,7 @@ public class Subtask extends Task {
         epic.addSubtask(this);
     }
 
-    public Subtask(String name, String description, Epic epic, int duration, Instant startTime) {
+    public Subtask(String name, String description, Epic epic, int duration, LocalDateTime startTime) {
         super(name, description, duration, startTime);
         this.epic = epic;
 

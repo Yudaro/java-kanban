@@ -1,4 +1,4 @@
-package manager;
+package managers;
 
 import entities.Node;
 import entities.Task;

@@ -1,10 +1,10 @@
-package manager;
+package managers;
 
 import entities.Epic;
 import entities.Subtask;
 import entities.Task;
 import enums.TaskStatus;
-import exception.ManagerSaveException;
+import exceptions.ManagerSaveException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,16 +14,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         Epic epic = new Epic("Епик1", "Доделать 7 фз");
-        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic, 10, Instant.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Реализовать метод main и протестировать фз8", epic, 20, Instant.now().plusSeconds(700));
+        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic, 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Реализовать метод main и протестировать фз8", epic, 20, LocalDateTime.now().plusSeconds(700));
         FileBackedTaskManager manager1 = new FileBackedTaskManager("tasks.csv");
         manager1.createEpic(epic);
         manager1.createSubtask(subtask);
@@ -90,7 +89,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 TaskStatus status = TaskStatus.valueOf(parts[3]);
                 String description = parts[4];
                 int duration = Integer.parseInt(parts[6]);
-                Instant startTime = LocalDateTime.parse(parts[7], formatter).atZone(ZoneId.of("Europe/Moscow")).toInstant();
+                LocalDateTime startTime = LocalDateTime.parse(parts[7], formatter);
 
                 switch (type) {
                     case "Task":
@@ -106,10 +105,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         epic.setStatus(status);
                         break;
                     case "Subtask":
-                        Subtask subtask = new Subtask(name, description, super.getEpicById(Integer.parseInt(parts[5])), duration, startTime);
-                        super.createSubtask(subtask);
-                        subtask.setId(id);
-                        subtask.setStatus(status);
+                        Optional<Epic> optionalEpic = super.getEpicById(Integer.parseInt(parts[5]));
+                        if (optionalEpic.isPresent()) {
+                            Epic epicForSubtask = optionalEpic.get();
+                            Subtask subtask = new Subtask(name, description, epicForSubtask, duration, startTime);
+                            super.createSubtask(subtask);
+                            subtask.setId(id);
+                            subtask.setStatus(status);
+                        }
                         break;
                 }
             }
@@ -162,7 +165,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         builder.append(task.getDuration());
         builder.append(",");
         if (task.getStartTime() != null) {
-            builder.append(LocalDateTime.ofInstant(task.getStartTime(), ZoneId.of("Europe/Moscow")).format(formatter));
+            builder.append(task.getStartTime().format(formatter));
         } else {
             builder.append("null");
         }
