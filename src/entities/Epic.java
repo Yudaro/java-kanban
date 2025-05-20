@@ -2,34 +2,40 @@ package entities;
 
 import enums.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Epic extends Task {
     private final List<Subtask> subtasks;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, 0, null);
         subtasks = new ArrayList<>();
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
-        setStatus(checkStatusEpic());
+        if (subtask.getStartTime() != null) {
+            subtasks.add(subtask);
+            setStatus(checkStatusEpic());
+            calculateEpicDuration(subtask);
+            calculateEpicStartTime(subtask);
+            calculateEpicEndTime(subtask);
+        }
     }
 
     public void clearSubtasks() {
         subtasks.clear();
+        duration = 0;
+        startTime = null;
     }
 
     public List<Integer> getSubtasksId() {
-        List<Integer> subtasksId = new ArrayList<>();
-
-        for (Subtask subtask : subtasks) {
-            subtasksId.add(subtask.getId());
-        }
-
-        return subtasksId;
+        return subtasks.stream()
+                .map(Subtask::getId)
+                .collect(Collectors.toList());
     }
 
     public List<Subtask> getSubtasks() {
@@ -66,6 +72,30 @@ public class Epic extends Task {
             return TaskStatus.DONE;
         } else {
             return TaskStatus.IN_PROGRESS;
+        }
+    }
+
+    private void calculateEpicDuration(Subtask sabtask) {
+        duration += sabtask.getDuration();
+    }
+
+    private void calculateEpicStartTime(Subtask subtask) {
+        if (startTime == null) {
+            startTime = subtask.getStartTime();
+        } else {
+            if (subtask.getStartTime().isBefore(startTime)) {
+                startTime = subtask.getStartTime();
+            }
+        }
+    }
+
+    private void calculateEpicEndTime(Subtask subtask) {
+        if (endTime == null) {
+            endTime = subtask.getEndTime();
+        } else {
+            if (endTime.isBefore(subtask.getEndTime())) {
+                endTime = subtask.getEndTime();
+            }
         }
     }
 }

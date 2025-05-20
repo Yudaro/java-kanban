@@ -1,25 +1,36 @@
-package manager;
+package managers;
 
 import entities.Epic;
 import entities.Subtask;
 import entities.Task;
 import enums.TaskStatus;
+import exceptions.ManagerSaveException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
-import exception.ManagerSaveException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         Epic epic = new Epic("Епик1", "Доделать 7 фз");
-        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic);
+        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic, 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Реализовать метод main и протестировать фз8", epic, 20, LocalDateTime.now().plusSeconds(700));
         FileBackedTaskManager manager1 = new FileBackedTaskManager("tasks.csv");
         manager1.createEpic(epic);
         manager1.createSubtask(subtask);
+        manager1.createSubtask(subtask2);
+
+        System.out.println(epic.getStartTime());
+        System.out.println(epic.getEndTime());
+        System.out.println(epic.getDuration());
 
         FileBackedTaskManager manager2 = new FileBackedTaskManager(manager1.saveFile);
         System.out.println(manager2.getAllEpics().size());
@@ -27,6 +38,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     File saveFile;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     /*
     Конструктор класса, мы получаем имя файла для дальнейшего удобства, после чего сами создаем объект Path для
@@ -58,7 +70,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return new FileBackedTaskManager(file);
     }
 
-    // Метод должжен считывать задачи из файла и добавлять их в hashMap
+    /*
+    Вообщем мы тут все перелопатили, теперь когда мы создаем Task и ее наследников, при считывании из файла, мы так же работаем с датами.
+    Единственное есть пока большая проблема при работе с Epic, ему нужно задавать поля высчитывая их из всех его сабтаск.
+    ВАЖНО!!!!!!!!!!!!!(На данный момент не реализовано)
+    */
     public void loadFromFile() {
         try (BufferedReader reader = Files.newBufferedReader(saveFile.toPath())) {
             String line;
@@ -72,10 +88,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String name = parts[2];
                 TaskStatus status = TaskStatus.valueOf(parts[3]);
                 String description = parts[4];
+                int duration = Integer.parseInt(parts[6]);
+                LocalDateTime startTime = LocalDateTime.parse(parts[7], formatter);
 
                 switch (type) {
                     case "Task":
-                        Task task = new Task(name, description);
+                        Task task = new Task(name, description, duration, startTime);
                         super.createTask(task);
                         task.setId(id);
                         task.setStatus(status);
@@ -87,10 +105,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         epic.setStatus(status);
                         break;
                     case "Subtask":
-                        Subtask subtask = new Subtask(name, description, super.getEpicById(Integer.parseInt(parts[5])));
-                        super.createSubtask(subtask);
-                        subtask.setId(id);
-                        subtask.setStatus(status);
+                        Optional<Epic> optionalEpic = super.getEpicById(Integer.parseInt(parts[5]));
+                        if (optionalEpic.isPresent()) {
+                            Epic epicForSubtask = optionalEpic.get();
+                            Subtask subtask = new Subtask(name, description, epicForSubtask, duration, startTime);
+                            super.createSubtask(subtask);
+                            subtask.setId(id);
+                            subtask.setStatus(status);
+                        }
                         break;
                 }
             }
@@ -102,7 +124,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     //Мы должны пройтись по всем задачам из имеющихся у нас hashMap и записать их все в файл, файл будем пересоздавать
     public void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(saveFile.toPath(), StandardOpenOption.TRUNCATE_EXISTING)) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write("id,type,name,status,description,epic,duration,startTime,");
             writer.newLine();
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при записи в файл.");
@@ -119,8 +141,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             for (Subtask subtask : subtasks.values()) {
                 writer.write(standartTaskToString(subtask));
-                writer.write(String.valueOf(subtask.getEpic().getId()));
-                writer.write(",");
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -139,6 +159,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         builder.append(task.getStatus());
         builder.append(",");
         builder.append(task.getDescription());
+        builder.append(",");
+        builder.append(task.getEpic());
+        builder.append(",");
+        builder.append(task.getDuration());
+        builder.append(",");
+        if (task.getStartTime() != null) {
+            builder.append(task.getStartTime().format(formatter));
+        } else {
+            builder.append("null");
+        }
         builder.append(",");
         return builder.toString();
     }

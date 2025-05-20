@@ -1,4 +1,4 @@
-package manager;
+package managers;
 
 import entities.Epic;
 import entities.Subtask;
@@ -6,9 +6,13 @@ import entities.Task;
 import enums.TaskStatus;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface TaskManager {
-    void updateEpicStatus(Epic epic);
+    void updateEpicStatus(int id);
+
+    Set<Task> getPrioritizedTasks();
 
     List<Epic> getAllEpics();
 
@@ -28,11 +32,11 @@ public interface TaskManager {
 
     void createSubtask(Subtask subtask);
 
-    Epic getEpicById(int id);
+    Optional<Epic> getEpicById(int id);
 
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
-    Subtask getSubtaskById(int id);
+    Optional<Subtask> getSubtaskById(int id);
 
     void updateEpic(Epic epic);
 
