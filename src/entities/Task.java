@@ -19,7 +19,7 @@ public class Task {
         this.description = description;
         this.status = TaskStatus.NEW;
         this.duration = 10;
-        this.startTime = LocalDateTime.now();
+        this.startTime = null;
     }
 
     public Task(String name, String description, int duration, LocalDateTime startTime) {
@@ -58,16 +58,10 @@ public class Task {
         return startTime.plus(Duration.ofMinutes(duration));
     }
 
-    public void setDuration(int duration) {
-        if (duration > 0) {
-            this.duration = duration;
-        }
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        if (LocalDateTime.now().isBefore(startTime)) {
-            this.startTime = startTime;
-        }
+    public Task setStartTime(LocalDateTime startTime) {
+        Task task = new Task(this.name, this.description, this.duration, startTime);
+        task.setId(this.getId());
+        return task;
     }
 
     public boolean isNotIntersectionWithExistingTask(Task task) {

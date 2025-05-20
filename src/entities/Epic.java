@@ -17,11 +17,13 @@ public class Epic extends Task {
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
-        setStatus(checkStatusEpic());
-        calculateEpicDuration(subtask);
-        calculateEpicStartTime(subtask);
-        calculateEpicEndTime(subtask);
+        if (subtask.getStartTime() != null) {
+            subtasks.add(subtask);
+            setStatus(checkStatusEpic());
+            calculateEpicDuration(subtask);
+            calculateEpicStartTime(subtask);
+            calculateEpicEndTime(subtask);
+        }
     }
 
     public void clearSubtasks() {
