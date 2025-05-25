@@ -1,8 +1,8 @@
-package managers_test;
+package managers_tests;
 
-import manager.HistoryManager;
-import manager.Managers;
-import manager.TaskManager;
+import managers.HistoryManager;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

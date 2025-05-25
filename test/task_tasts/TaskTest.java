@@ -1,4 +1,4 @@
-package task_tast;
+package task_tasts;
 
 import entities.Task;
 import org.junit.jupiter.api.Assertions;
