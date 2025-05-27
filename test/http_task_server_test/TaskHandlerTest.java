@@ -1,6 +1,6 @@
 package http_task_server_test;
 
-import Handlers.LocalDateTimeAdapter;
+import handlers.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.Task;

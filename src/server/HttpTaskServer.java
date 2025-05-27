@@ -1,9 +1,9 @@
 package server;
 
-import Handlers.EpicHandler;
-import Handlers.SubtaskHandler;
-import Handlers.SystemHandler;
-import Handlers.TaskHandler;
+import handlers.EpicHandler;
+import handlers.SubtaskHandler;
+import handlers.SystemHandler;
+import handlers.TaskHandler;
 import com.sun.net.httpserver.HttpServer;
 import entities.Epic;
 import entities.Subtask;
