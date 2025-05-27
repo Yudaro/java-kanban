@@ -32,9 +32,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void checkAddAndSearchSubtaskById() {
         Epic epic = new Epic("Домашние дела", "Навести порядок дома");
-        Subtask subtask1 = new Subtask("Посуда", "Помыть посуду", epic, 10, LocalDateTime.now());
-
         manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Посуда", "Помыть посуду", epic.getId(), 10, LocalDateTime.now());
+
         manager.createSubtask(subtask1);
         List<Subtask> subtasks = manager.getAllSubtasks();
         Assertions.assertEquals(1, subtasks.size());
@@ -83,9 +83,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void checkThatSubtaskFieldsAreNotChangedWhenAddedToTheManager() {
         Epic epic = new Epic("Домашние задачи", "Навести порядок дома");
-        Subtask subtask = new Subtask("Домашние дела", "Убрать гардероб", epic, 10, LocalDateTime.now());
-        subtask.setId(10);
         manager.createEpic(epic);
+        Subtask subtask = new Subtask("Домашние дела", "Убрать гардероб", epic.getId(), 10, LocalDateTime.now());
+        subtask.setId(10);
         manager.createSubtask(subtask);
 
         Assertions.assertEquals("Домашние дела", subtask.getName());

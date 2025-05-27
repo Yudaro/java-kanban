@@ -109,9 +109,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     /*
     Если пользователь не задал самостоятельно StartTime мы создадим Subtask и добавим ее к остальным в Map никаких действий мы больше с ней делать не будем.
+    Я сделала так что бы при создании Subtask если у нее есть время, она добавиться в список всех Subtask в классе Epic
+    Если вермя не было задано, то она просто добавиться уже при апдейте. Tсли изначально в поле StartTime было null
      */
     @Override
     public void createSubtask(Subtask subtask) {
+        Epic temporryEpic = getEpicById(subtask.getEpic())
+                .orElseThrow(() -> new AssertionError("Epic not found"));
         counter++;
         subtask.setId(counter);
         if (subtask.getStartTime() != null) {
@@ -119,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.put(counter, subtask);
             updateEpicStatus(subtask.getEpic());
             prioritizedTasks.add(subtask);
+            temporryEpic.addSubtask(subtask);
         }
         subtasks.put(counter, subtask);
         updateEpicStatus(subtask.getEpic());
@@ -183,16 +188,22 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    /*
+    Изменили логику, теперь если у нашей Subtask время до update было null, мы добавляем ее в список subtasks у Epic
+     */
     @Override
     public void updateSubtask(Subtask subtask) {
         Subtask temporarySubtask = getSubtaskById(subtask.getId())
                 .orElseThrow(() -> new AssertionError("Subtask not found"));
+        Epic temporryEpic = getEpicById(subtask.getEpic())
+                .orElseThrow(() -> new AssertionError("Epic not found"));
 
         if (subtasks.containsKey(subtask.getId())) {
             subtasks.put(subtask.getId(), subtask);
         }
 
         if (temporarySubtask.getStartTime() == null) {
+            temporryEpic.addSubtask(subtask); //Вот тут.
             checkIntersections(subtask);
             prioritizedTasks.add(subtask);
         } else if (!temporarySubtask.getStartTime().equals(subtask.getStartTime())) {

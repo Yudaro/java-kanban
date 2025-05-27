@@ -43,9 +43,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     @Test
     public void chekSaveSubtaskInFile() {
         Epic epic = new Epic("Ремонт", "Доделать ремонт");
-        Subtask subtask = new Subtask("ПодзадачаРемонт", "Починить кран", epic, 10, LocalDateTime.now());
-
         manager.createEpic(epic);
+        Subtask subtask = new Subtask("ПодзадачаРемонт", "Починить кран", epic.getId(), 10, LocalDateTime.now());
+
         manager.createSubtask(subtask);
 
         Assertions.assertEquals(1, manager.getAllEpics().size());

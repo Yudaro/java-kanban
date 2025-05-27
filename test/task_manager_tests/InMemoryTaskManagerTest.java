@@ -61,8 +61,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void checkThePossibilityOfChangingTheStartTimeTaskSubtaskaskAndItsFurtherFiltering() {
         Epic epic = new Epic("Епик", "Описание Епика");
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic, 10, LocalDateTime.of(2025, Month.JUNE, 10, 6, 10));
-        Subtask subtask2 = new Subtask("Сабтаск1", "Проверка сортировки", epic, 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic.getId(), 10, LocalDateTime.of(2025, Month.JUNE, 10, 6, 10));
+        Subtask subtask2 = new Subtask("Сабтаск1", "Проверка сортировки", epic.getId(), 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
         Task task1 = new Task("Тас1", "Описание таск1", 10, LocalDateTime.of(2025, Month.JUNE, 10, 8, 10));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
@@ -88,8 +89,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void checkThatTaskAndSubtaskWithTheStartTimeNullFieldAreNotAddedToTheSortedList() {
         Epic epic = new Epic("Епик", "Описание Епика");
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic);
-        Subtask subtask2 = new Subtask("Сабтаск1", "Проверка сортировки", epic, 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic.getId());
+        Subtask subtask2 = new Subtask("Сабтаск1", "Проверка сортировки", epic.getId(), 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
         Task task1 = new Task("Тас1", "Описание таск1");
 
         manager.createSubtask(subtask1);
@@ -102,8 +104,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     @Test
     public void checkThatAfterChangingTheStartTimeFieldFromNullToTimeTaskAndSubtaskAddedAndSorted() {
         Epic epic = new Epic("Епик", "Описание Епика");
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic);
-        Subtask subtask2 = new Subtask("Сабтаск2", "Проверка сортировки", epic, 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
+        manager.createEpic(epic);
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверка сортировки", epic.getId());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Проверка сортировки", epic.getId(), 10, LocalDateTime.of(2025, Month.JUNE, 10, 7, 10));
         Task task1 = new Task("Тас1", "Описание таск1");
 
         manager.createSubtask(subtask1);

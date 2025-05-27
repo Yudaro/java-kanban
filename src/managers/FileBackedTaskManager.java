@@ -21,8 +21,8 @@ import java.util.Optional;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         Epic epic = new Epic("Епик1", "Доделать 7 фз");
-        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic, 10, LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Реализовать метод main и протестировать фз8", epic, 20, LocalDateTime.now().plusSeconds(700));
+        Subtask subtask = new Subtask("Сабтаск1", "Реализовать метод main и протестировать фз", epic.getId(), 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Реализовать метод main и протестировать фз8", epic.getId(), 20, LocalDateTime.now().plusSeconds(700));
         FileBackedTaskManager manager1 = new FileBackedTaskManager("tasks.csv");
         manager1.createEpic(epic);
         manager1.createSubtask(subtask);
@@ -108,7 +108,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         Optional<Epic> optionalEpic = super.getEpicById(Integer.parseInt(parts[5]));
                         if (optionalEpic.isPresent()) {
                             Epic epicForSubtask = optionalEpic.get();
-                            Subtask subtask = new Subtask(name, description, epicForSubtask, duration, startTime);
+                            Subtask subtask = new Subtask(name, description, epicForSubtask.getId(), duration, startTime);
                             super.createSubtask(subtask);
                             subtask.setId(id);
                             subtask.setStatus(status);
