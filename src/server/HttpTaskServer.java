@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 
 public class HttpTaskServer {
-    private final int PORT = 8080;
+    private final int port = 8080;
     private final TaskManager manager;
     private final HttpServer httpServer;
 
@@ -24,7 +24,7 @@ public class HttpTaskServer {
         this.manager = manager;
 
         // Создаём HTTP-сервер
-        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        httpServer = HttpServer.create(new InetSocketAddress(port), 0);
 
         // Регистрируем обработчики
         httpServer.createContext("/tasks", new TaskHandler(manager));
@@ -36,7 +36,7 @@ public class HttpTaskServer {
 
     public void start() {
         httpServer.start();
-        System.out.println("HTTP-сервер запущен на порту " + PORT);
+        System.out.println("HTTP-сервер запущен на порту " + port);
     }
 
     public void stop() {
