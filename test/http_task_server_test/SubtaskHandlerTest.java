@@ -102,4 +102,41 @@ public class SubtaskHandlerTest {
         }
         assertEquals("[]", response);
     }
+
+    @Test
+    void deleteAllSubtasks() throws IOException {
+        Epic epic = new Epic("Эпик для подзадач", "описание");
+        manager.createEpic(epic);
+
+        Subtask subtask1 = new Subtask("Подзадача 1", "desc", epic.getId(), 30, LocalDateTime.of(2025, 6, 1, 12, 0));
+        String json1 = gson.toJson(subtask1);
+        HttpURLConnection post1 = (HttpURLConnection) new URL("http://localhost:8080/subtasks").openConnection();
+        post1.setRequestMethod("POST");
+        post1.setDoOutput(true);
+        post1.setRequestProperty("Content-Type", "application/json");
+        post1.getOutputStream().write(json1.getBytes(StandardCharsets.UTF_8));
+        post1.getResponseCode();
+
+        Subtask subtask2 = new Subtask("Подзадача 2", "desc", epic.getId(), 45, LocalDateTime.of(2025, 6, 1, 13, 0));
+        String json2 = gson.toJson(subtask2);
+        HttpURLConnection post2 = (HttpURLConnection) new URL("http://localhost:8080/subtasks").openConnection();
+        post2.setRequestMethod("POST");
+        post2.setDoOutput(true);
+        post2.setRequestProperty("Content-Type", "application/json");
+        post2.getOutputStream().write(json2.getBytes(StandardCharsets.UTF_8));
+        post2.getResponseCode();
+
+        HttpURLConnection delete = (HttpURLConnection) new URL("http://localhost:8080/subtasks").openConnection();
+        delete.setRequestMethod("DELETE");
+        assertEquals(200, delete.getResponseCode());
+
+        HttpURLConnection getAll = (HttpURLConnection) new URL("http://localhost:8080/subtasks").openConnection();
+        getAll.setRequestMethod("GET");
+        String response;
+        try (Scanner scanner = new Scanner(getAll.getInputStream(), StandardCharsets.UTF_8)) {
+            response = scanner.useDelimiter("\\A").next();
+        }
+
+        assertEquals("[]", response);
+    }
 }

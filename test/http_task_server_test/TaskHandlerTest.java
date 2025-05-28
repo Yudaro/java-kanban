@@ -102,4 +102,38 @@ public class TaskHandlerTest {
             assertEquals("[]", response);
         }
     }
+
+    @Test
+    void deleteAllTasks() throws IOException {
+        Task task1 = new Task("Задача 1", "описание 1", 30, LocalDateTime.of(2025, 6, 1, 10, 0));
+        String json1 = gson.toJson(task1);
+        HttpURLConnection post1 = (HttpURLConnection) new URL("http://localhost:8080/tasks").openConnection();
+        post1.setRequestMethod("POST");
+        post1.setDoOutput(true);
+        post1.setRequestProperty("Content-Type", "application/json");
+        post1.getOutputStream().write(json1.getBytes(StandardCharsets.UTF_8));
+        post1.getResponseCode();
+
+        Task task2 = new Task("Задача 2", "описание 2", 45, LocalDateTime.of(2025, 6, 1, 11, 0));
+        String json2 = gson.toJson(task2);
+        HttpURLConnection post2 = (HttpURLConnection) new URL("http://localhost:8080/tasks").openConnection();
+        post2.setRequestMethod("POST");
+        post2.setDoOutput(true);
+        post2.setRequestProperty("Content-Type", "application/json");
+        post2.getOutputStream().write(json2.getBytes(StandardCharsets.UTF_8));
+        post2.getResponseCode();
+
+        HttpURLConnection delete = (HttpURLConnection) new URL("http://localhost:8080/tasks").openConnection();
+        delete.setRequestMethod("DELETE");
+        assertEquals(200, delete.getResponseCode());
+
+        HttpURLConnection getAll = (HttpURLConnection) new URL("http://localhost:8080/tasks").openConnection();
+        getAll.setRequestMethod("GET");
+        String response;
+        try (Scanner scanner = new Scanner(getAll.getInputStream(), StandardCharsets.UTF_8)) {
+            response = scanner.useDelimiter("\\A").next();
+        }
+
+        assertEquals("[]", response);
+    }
 }

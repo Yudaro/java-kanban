@@ -3,7 +3,6 @@ package handlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import entities.Task;
 import exceptions.TaskTimeConflictException;
 import managers.TaskManager;
@@ -15,8 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
-    private TaskManager manager;
+public class TaskHandler extends BaseHttpHandler {
+    private final TaskManager manager;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
@@ -26,31 +25,27 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        String method = httpExchange.getRequestMethod();// Получаем метод (GET, POST, DELETE)
-        URI uri = httpExchange.getRequestURI();// Получаем URI запроса
-        String path = uri.getPath();// Извлекаем путь из URI
+    protected void handleRequest(HttpExchange httpExchange) throws IOException {
+        String method = httpExchange.getRequestMethod();
+        URI uri = httpExchange.getRequestURI();
+        String path = uri.getPath();
 
         switch (method) {
             case "GET":
-                // 1. Обработка запроса на получение всех задач
                 if (path.equals("/tasks")) {
-                    List<Task> tasks = manager.getAllTasks();          // Получаем все задачи
-                    String json = gson.toJson(tasks);               // Преобразуем в JSON
-                    sendText(httpExchange, json);                   // Отправляем ответ
-                    break;
+                    List<Task> tasks = manager.getAllTasks();
+                    sendText(httpExchange, gson.toJson(tasks));
+                    return;
                 }
 
-                // 2. Обработка запроса на получение одной задачи по ID
                 if (path.startsWith("/tasks/")) {
-                    String[] parts = path.split("/");               // Например: ["", "tasks", "2"]
+                    String[] parts = path.split("/");
                     if (parts.length == 3) {
                         try {
-                            int id = Integer.parseInt(parts[2]);    // Извлекаем ID из пути
-                            Optional<Task> optionalTask = manager.getTaskById(id); // Получаем Optional<Task>
-                            if (optionalTask.isPresent()) {
-                                Task task = optionalTask.get();     // Извлекаем задачу
-                                sendText(httpExchange, gson.toJson(task)); // Отправляем JSON
+                            int id = Integer.parseInt(parts[2]);
+                            Optional<Task> task = manager.getTaskById(id);
+                            if (task.isPresent()) {
+                                sendText(httpExchange, gson.toJson(task.get()));
                             } else {
                                 sendNotFound(httpExchange, "Задача с id=" + id + " не найдена");
                             }
@@ -60,58 +55,51 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                     } else {
                         sendNotFound(httpExchange, "Некорректный путь запроса");
                     }
-                    break;
+                    return;
                 }
 
-                // Если путь не соответствует известным шаблонам — отправляем 404
                 sendNotFound(httpExchange, "Неподдерживаемый путь: " + path);
-                break;
+                return;
+
             case "POST":
-                try {
-                    // 1. Чтение тела запроса
-                    String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                    System.out.println("POST /tasks BODY = " + body);
+                String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                Task task = gson.fromJson(body, Task.class);
 
-                    // 2. Преобразуем JSON → Task
-                    Task task = gson.fromJson(body, Task.class);
-
-                    // 3. Проверка на null
-                    if (task == null) {
-                        sendNotFound(httpExchange, "Невозможно разобрать тело запроса");
-                        break;
-                    }
-
-                    // 4. Создание или обновление
-                    try {
-                        if (task.getId() == 0) {
-                            manager.createTask(task);
-                        } else {
-                            manager.updateTask(task);
-                        }
-
-                        // 5. Успешно создана/обновлена
-                        String json = gson.toJson(task);
-                        httpExchange.sendResponseHeaders(201, json.getBytes().length);
-                        httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-                        httpExchange.getResponseBody().write(json.getBytes());
-                    } catch (TaskTimeConflictException e) {
-                        // 6. Пересечение по времени — вернуть 406
-                        sendHasInteractions(httpExchange, "Ошибка: задача пересекается с другими");
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    sendNotFound(httpExchange, "Ошибка при обработке POST запроса");
+                if (task == null) {
+                    sendNotFound(httpExchange, "Невозможно разобрать тело запроса");
+                    return;
                 }
-                break;
+
+                try {
+                    if (task.getId() == 0) {
+                        manager.createTask(task);
+                    } else {
+                        manager.updateTask(task);
+                    }
+
+                    String json = gson.toJson(task);
+                    httpExchange.sendResponseHeaders(201, json.getBytes().length);
+                    httpExchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
+                    httpExchange.getResponseBody().write(json.getBytes());
+                } catch (TaskTimeConflictException e) {
+                    sendHasInteractions(httpExchange, "Ошибка: задача пересекается с другими");
+                }
+                return;
+
             case "DELETE":
+                if (path.equals("/tasks")) {
+                    manager.deleteAllTasks();
+                    sendText(httpExchange, "Все задачи удалены");
+                    return;
+                }
+
                 if (path.startsWith("/tasks/")) {
                     String[] parts = path.split("/");
                     if (parts.length == 3) {
                         try {
                             int id = Integer.parseInt(parts[2]);
-                            Optional<Task> task = manager.getTaskById(id);
-                            if (task.isPresent()) {
+                            Optional<Task> taskToDelete = manager.getTaskById(id);
+                            if (taskToDelete.isPresent()) {
                                 manager.deleteTaskById(id);
                                 sendText(httpExchange, "Задача удалена");
                             } else {
@@ -123,12 +111,14 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                     } else {
                         sendNotFound(httpExchange, "Некорректный путь запроса");
                     }
-                    break;
+                    return;
                 }
-                break;
+
+                sendNotFound(httpExchange, "Неподдерживаемый путь: " + path);
+                return;
+
             default:
                 sendNotFound(httpExchange, "Метод " + method + " не поддерживается");
-                break;
         }
     }
 }

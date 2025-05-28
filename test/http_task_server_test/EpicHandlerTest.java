@@ -1,5 +1,6 @@
 package http_task_server_test;
 
+import entities.Subtask;
 import handlers.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,5 +90,40 @@ public class EpicHandlerTest {
             response = scanner.useDelimiter("\\A").next();
         }
         assertEquals("[]", response);
+    }
+
+    @Test
+    void deleteAllEpicsAlsoDeletesAllSubtasks() throws IOException {
+        Epic epic1 = new Epic("Epic 1", "desc");
+        Epic epic2 = new Epic("Epic 2", "desc");
+        manager.createEpic(epic1);
+        manager.createEpic(epic2);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "desc", epic1.getId(), 30,
+                LocalDateTime.of(2025, 6, 2, 10, 0));
+        Subtask subtask2 = new Subtask("Subtask 2", "desc", epic1.getId(), 45,
+                LocalDateTime.of(2025, 6, 2, 11, 0));
+        manager.createSubtask(subtask1);
+        manager.createSubtask(subtask2);
+
+        HttpURLConnection delete = (HttpURLConnection) new URL("http://localhost:8080/epics").openConnection();
+        delete.setRequestMethod("DELETE");
+        assertEquals(200, delete.getResponseCode());
+
+        HttpURLConnection getEpics = (HttpURLConnection) new URL("http://localhost:8080/epics").openConnection();
+        getEpics.setRequestMethod("GET");
+        String epicResponse;
+        try (Scanner scanner = new Scanner(getEpics.getInputStream(), StandardCharsets.UTF_8)) {
+            epicResponse = scanner.useDelimiter("\\A").next();
+        }
+        assertEquals("[]", epicResponse);
+
+        HttpURLConnection getSubtasks = (HttpURLConnection) new URL("http://localhost:8080/subtasks").openConnection();
+        getSubtasks.setRequestMethod("GET");
+        String subtaskResponse;
+        try (Scanner scanner = new Scanner(getSubtasks.getInputStream(), StandardCharsets.UTF_8)) {
+            subtaskResponse = scanner.useDelimiter("\\A").next();
+        }
+        assertEquals("[]", subtaskResponse);
     }
 }
