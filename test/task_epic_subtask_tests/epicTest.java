@@ -1,4 +1,4 @@
-package taskEpicSubtaskTests;
+package task_epic_subtask_tests;
 
 import entities.Epic;
 import entities.Subtask;
@@ -17,8 +17,8 @@ public class epicTest {
         Epic epic = new Epic("Епик", "проверяем статус epic");
         manager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic, 10, LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic, 10, LocalDateTime.now().plusSeconds(1000));
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic.getId(), 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic.getId(), 10, LocalDateTime.now().plusSeconds(1000));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
@@ -30,8 +30,8 @@ public class epicTest {
         Epic epic = new Epic("Епик", "проверяем статус epic");
         manager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic, 10, LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic, 10, LocalDateTime.now().plusSeconds(1000));
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic.getId(), 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic.getId(), 10, LocalDateTime.now().plusSeconds(1000));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
         manager.updateStatusSubtask(subtask1, TaskStatus.DONE);
@@ -45,8 +45,8 @@ public class epicTest {
         Epic epic = new Epic("Епик", "проверяем статус epic");
         manager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic, 10, LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic, 10, LocalDateTime.now().plusSeconds(1000));
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic.getId(), 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic.getId(), 10, LocalDateTime.now().plusSeconds(1000));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
         manager.updateStatusSubtask(subtask1, TaskStatus.IN_PROGRESS);
@@ -60,8 +60,8 @@ public class epicTest {
         Epic epic = new Epic("Епик", "проверяем статус epic");
         manager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic, 10, LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic, 10, LocalDateTime.now().plusSeconds(1000));
+        Subtask subtask1 = new Subtask("Сабтаск1", "Проверяем статус", epic.getId(), 10, LocalDateTime.now());
+        Subtask subtask2 = new Subtask("Сабтаск2", "Проверяем статус", epic.getId(), 10, LocalDateTime.now().plusSeconds(1000));
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
         manager.updateStatusSubtask(subtask1, TaskStatus.NEW);
